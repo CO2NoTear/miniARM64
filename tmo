@@ -1,0 +1,5 @@
+	if(freopen(output, "w", stdout)==NULL)
+	{
+		printf("error: open %s failed\n", output);
+		return 0;
+	}
