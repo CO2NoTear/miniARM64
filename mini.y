@@ -134,7 +134,11 @@ declaration_list        :
 }
 ;
 
-statement_list : statement
+statement_list : 
+{
+	$$=NULL;
+}
+
 | statement_list statement
 {
 	$$=join_tac($1, $2);
@@ -202,6 +206,10 @@ expression : expression '+' expression
 | IDENTIFIER
 {
 	$$=mk_exp(NULL, get_var($1), NULL);
+}
+| TEXT
+{
+	$$=mk_exp(NULL, mk_text($1), NULL);
 }
 | call_expression
 {

@@ -1,17 +1,19 @@
+int k;
 main()
 {
 	int i,j;
 	i=123;
 	j=222;
+	k=4;
 	if(i!=j)
 	{ 
-		print(i,"!=",j); 
+		print("%d != %d", i, j); 
 	}
 	else
 	{ 
-		print(i,"==",j); 
+		print("%d == %d", i, j); 
 	}
 	i=999;
-	print("\n",i,"\n");
+	print("%d\n", i);
 }
 

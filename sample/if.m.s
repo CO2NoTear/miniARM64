@@ -1,220 +1,116 @@
-	# head
-	LOD R2,STACK
-	STO (R2),0
-	LOD R4,EXIT
-	STO (R2+4),R4
+  .arch armv8-a
+  .text
+
+	.data  .global k
+  .type k, %object
+  .size k, 4
+k:
+  .word 0
+	.section .rodata
+// Read-only data section
+str1:
+	.asciz "%d != %d"
+str2:
+	.asciz "%d == %d"
+str5:
+	.asciz "%d\n"
+
+	# var k
 
 	# label main
+	.text
+	.global main
 main:
 
 	# begin
-
+  add sp, sp, #-32
+	stp x29, x30, [sp]
 	# var i
 
 	# var j
 
 	# i = 123
-	LOD R5,123
+	ldr x0,=123
 
 	# j = 222
-	LOD R6,222
+	ldr x1,=222
+
+	# k = 4
+	ldr x2,=4
 
 	# var t0
 
 	# t0 = (i != j)
-	STO (R2+8),R5
-	SUB R5,R6
-	TST R5
-	LOD R3,R1+40
-	JEZ R3
-	LOD R5,1
-	LOD R3,R1+24
-	JMP R3
-	LOD R5,0
-
+	str x0,[sp, 16]
+	cmp x0,x1
+	beq cmp_a0
+	mov x0,1
+	b cmp_b0
+cmp_a0:	mov x0,0
+cmp_b0:
 	# ifz t0 goto L3
-	STO (R2+16),R5
-	STO (R2+12),R6
-	TST R5
-	JEZ L3
-
-	# actual i
-	LOD R7,(R2+8)
-	STO (R2+20),R7
-
-	# call PRINTN
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTN
+	str x1,[sp, 8]
+	ldr x11, k
+	str x2,[x11]
+	cbz x0, L3
 
 	# actual L1
-	LOD R5,L1
-	STO (R2+20),R5
+	adr x0,str1
 
-	# call PRINTS
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTS
+	# call (null)
+  bl (null)
+	# actual i
+	ldr x0,[sp, 16]
 
+	# call (null)
+  bl (null)
 	# actual j
-	LOD R5,(R2+12)
-	STO (R2+20),R5
+	ldr x0,[sp, 8]
 
-	# call PRINTN
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTN
-
+	# call (null)
+  bl (null)
 	# goto L4
-	JMP L4
+	b L4
 
 	# label L3
+	.text
+	.global L3
 L3:
 
-	# actual i
-	LOD R5,(R2+8)
-	STO (R2+20),R5
-
-	# call PRINTN
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTN
-
 	# actual L2
-	LOD R5,L2
-	STO (R2+20),R5
+	adr x0,str2
 
-	# call PRINTS
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTS
+	# call (null)
+  bl (null)
+	# actual i
+	ldr x0,[sp, 16]
 
+	# call (null)
+  bl (null)
 	# actual j
-	LOD R5,(R2+12)
-	STO (R2+20),R5
+	ldr x0,[sp, 8]
 
-	# call PRINTN
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTN
-
+	# call (null)
+  bl (null)
 	# label L4
+	.text
+	.global L4
 L4:
 
 	# i = 999
-	LOD R5,999
+	ldr x0,=999
 
 	# actual L5
-	LOD R6,L5
-	STO (R2+20),R6
+	str x0,[sp, 16]
+	adr x0,str5
 
-	# call PRINTS
-	STO (R2+8),R5
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTS
-
+	# call (null)
+  bl (null)
 	# actual i
-	LOD R5,(R2+8)
-	STO (R2+20),R5
+	ldr x0,[sp, 16]
 
-	# call PRINTN
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTN
-
-	# actual L5
-	LOD R5,L5
-	STO (R2+20),R5
-
-	# call PRINTS
-	STO (R2+24),R2
-	LOD R4,R1+32
-	STO (R2+28),R4
-	LOD R2,R2+24
-	JMP PRINTS
-
+	# call (null)
+  bl (null)
 	# end
-	LOD R3,(R2+4)
-	LOD R2,(R2)
-	JMP R3
-
-PRINTN:
-	LOD R7,(R2-4) # 789
-	LOD R15,R7 # 789 
-	DIV R7,10 # 78
-	TST R7
-	JEZ PRINTDIGIT
-	LOD R8,R7 # 78
-	MUL R8,10 # 780
-	SUB R15,R8 # 9
-	STO (R2+8),R15 # local 9 store
-
-	# out 78
-	STO (R2+12),R7 # actual 78 push
-
-	# call PRINTN
-	STO (R2+16),R2
-	LOD R4,R1+32
-	STO (R2+20),R4
-	LOD R2,R2+16
-	JMP PRINTN
-
-	# out 9
-	LOD R15,(R2+8) # local 9 
-
-PRINTDIGIT:
-	ADD  R15,48
-	OUT
-
-	# ret
-	LOD R3,(R2+4)
-	LOD R2,(R2)
-	JMP R3
-
-PRINTS:
-	LOD R7,(R2-4)
-
-PRINTC:
-	LOD R15,(R7)
-	DIV R15,16777216
-	TST R15
-	JEZ PRINTSEND
-	OUT
-	ADD R7,1
-	JMP PRINTC
-
-PRINTSEND:
-	# ret
-	LOD R3,(R2+4)
-	LOD R2,(R2)
-	JMP R3
-
-EXIT:
-	END
-
-L5:
-	DBS 10,0
-L2:
-	DBS 61,61,0
-L1:
-	DBS 33,61,0
-STATIC:
-	DBN 0,0
-STACK:
+  ldp x29, x30, [sp]
+  add sp, sp, #32

@@ -2,19 +2,22 @@
 #define OBJ
 /* register */
 #define R_UNDEF -1
-#define R_FLAG 0 // FLAG bit
-#define R_IP 1	 // reg PC
-#define R_BP 2	 // Base Address
-#define R_JP 3	 // Jump Address
-#define R_TP 4	 // Temp
-#define R_GEN 5	 // General starting from 5, ending at 15
-#define R_NUM 16
+// #define R_FLAG 0	// FLAG bit
+#define R_IP "pc" // reg PC
+#define R_BP "sp" // Base Address
+#define R_JP 30		// Jump Address
+#define R_FP 29
+#define R_TP 0	// Temp
+#define R_GEN 0 // General starting from 0, ending at 30
+#define R_NUM 31
+#define REG_WIDTH 8				 // 64ARM: 8byte
+#define REG_OFFSET_STEP -8 // 64ARM: 8byte
 
 /* frame */
-#define FORMAL_OFF -4 /* first formal parameter */
-#define OBP_OFF 0			/* dynamic chain */
-#define RET_OFF 4			/* ret address */
-#define LOCAL_OFF 8		/* local var */
+#define FORMAL_OFF REG_WIDTH					/* first formal parameter */
+#define OBP_OFF 0											/* dynamic chain */
+#define RET_OFF REG_OFFSET_STEP				/* ret address */
+#define LOCAL_OFF 2 * REG_OFFSET_STEP /* local var */
 
 #define MODIFIED 1
 #define UNMODIFIED 0
@@ -30,6 +33,9 @@ extern int tof; /* top of frame */
 extern int oof; /* offset of formal */
 extern int oon; /* offset of next frame */
 
+void asm_static(void);
+unsigned int stack_alloc(unsigned int bytes);
+void stack_free(unsigned int bytes);
 void tac_obj();
 
 #endif
