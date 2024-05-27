@@ -50,14 +50,17 @@ main:
 	adrp x1, i
 	add x1, x1, :lo12:i
   ldr x1, [x1]
+
 	# actual j
 	adrp x2, j
 	add x2, x2, :lo12:j
   ldr x2, [x2]
+
 	# actual k
 	adrp x3, k
 	add x3, x3, :lo12:k
   ldr x3, [x3]
+
 	# call printf
   bl printf
 	# l = 1
@@ -126,14 +129,17 @@ main:
 	adrp x1, i
 	add x1, x1, :lo12:i
   ldr x1, [x1]
+
 	# actual j
 	adrp x2, j
 	add x2, x2, :lo12:j
   ldr x2, [x2]
+
 	# actual k
 	adrp x3, k
 	add x3, x3, :lo12:k
   ldr x3, [x3]
+
 	# call printf
   bl printf
 	# return 0
@@ -204,16 +210,19 @@ func:
 	adrp x1, i
 	add x1, x1, :lo12:i
   ldr x1, [x1]
+
 	# actual j
 	ldr x0, k
 	adrp x2, j
 	add x2, x2, :lo12:j
   ldr x2, [x2]
+
 	# actual k
 	str x3,[sp, 16]
 	adrp x3, k
 	add x3, x3, :lo12:k
   ldr x3, [x3]
+
 	# call printf
 	str x4,[sp, 24]
 	str x5,[sp, 32]

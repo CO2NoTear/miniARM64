@@ -4,6 +4,10 @@ FUNC_M = $(SAMPLE_DIR)/func.m
 FUNC_M_S =$(SAMPLE_DIR)/func.m.s
 FUNC_M_S_O = $(SAMPLE_DIR)/func.m.s.o
 
+ARR_M = $(SAMPLE_DIR)/arr.m
+ARR_M_S =$(SAMPLE_DIR)/arr.m.s
+ARR_M_S_O = $(SAMPLE_DIR)/arr.m.s.o
+
 ASSIGN_M = $(SAMPLE_DIR)/assign.m
 ASSIGN_M_S =$(SAMPLE_DIR)/assign.m.s
 ASSIGN_M_S_O = $(SAMPLE_DIR)/assign.m.s.o
@@ -30,6 +34,11 @@ func.m: all
 	$(MINI) $(FUNC_M) > $(FUNC_M_S)
 	gcc -g $(FUNC_M_S) -o $(FUNC_M_S_O)
 	chmod +x $(FUNC_M_S_O)
+	
+arr.m: all
+	$(MINI) $(ARR_M) > $(ARR_M_S)
+	gcc -g $(ARR_M_S) -o $(ARR_M_S_O)
+	chmod +x $(ARR_M_S_O)
 
 assign.m: all
 	$(MINI) $(ASSIGN_M) > $(ASSIGN_M_S)

@@ -4,7 +4,7 @@ main()
 	i=1;
 	while(i<10)
 	{ 
-		print(i,"\n"); 
+		printf("%d\n", i); 
 		i=i+1;
 	}
 }

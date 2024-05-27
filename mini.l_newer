@@ -1,7 +1,7 @@
 %{
 #include <stdlib.h>
 #include "tac.h"
-#include "mini.y.h"
+#include "y.tab.h"
 %}
 
 %option yylineno
@@ -17,6 +17,8 @@
 "short" { return SHORT; }
 
 "float" { return FLOAT; }
+
+"print"  {  return PRINT;  }
 
 "return"  {  return RETURN;  }
 
@@ -80,4 +82,3 @@ int yywrap()
 {
 	return 1;
 }
-

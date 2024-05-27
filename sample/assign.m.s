@@ -74,7 +74,8 @@ main:
 
 	# actual L1
 	str x0,[sp, 24]
-	adr x0,str1
+	adrp x0, str1
+	add x0, x0, :lo12:str1
 
 	# actual i
 	ldr x1,[sp, 16]
@@ -85,7 +86,8 @@ main:
 	str x6,[sp, 48]
   bl printf
 	# actual L2
-	adr x0,str2
+	adrp x0, str2
+	add x0, x0, :lo12:str2
 
 	# actual j
 	ldr x1,[sp, 24]
@@ -93,7 +95,8 @@ main:
 	# call printf
   bl printf
 	# actual L3
-	adr x0,str3
+	adrp x0, str3
+	add x0, x0, :lo12:str3
 
 	# actual k
 	ldr x1,[sp, 32]
@@ -101,7 +104,8 @@ main:
 	# call printf
   bl printf
 	# actual L4
-	adr x0,str4
+	adrp x0, str4
+	add x0, x0, :lo12:str4
 
 	# actual l
 	ldr x1,[sp, 40]
@@ -109,7 +113,8 @@ main:
 	# call printf
   bl printf
 	# actual L5
-	adr x0,str5
+	adrp x0, str5
+	add x0, x0, :lo12:str5
 
 	# actual m
 	ldr x1,[sp, 48]

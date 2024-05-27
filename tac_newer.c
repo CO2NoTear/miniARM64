@@ -1,4 +1,5 @@
 #include "tac.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,7 +78,8 @@ SYM *mk_var(char *name)
 		return NULL;
 	}
 
-	/* var unseen before, set up a new symbol table node, insert_sym it into the symbol table. */
+	/* var unseen before, set up a new symbol table node, insert_sym it into the
+	 * symbol table. */
 	sym = mk_sym();
 	sym->type = SYM_VAR;
 	sym->name = name; /* ysj */
@@ -201,9 +203,7 @@ SYM *mk_tmp(void)
 
 	name = malloc(12);
 	sprintf(name, "t%d", next_tmp++); /* Set up text */
-	sym = mk_var(name);
-	sym->temp_flag = 1;
-	return sym;
+	return mk_var(name);
 }
 
 TAC *declare_para(char *name)
@@ -470,28 +470,17 @@ TAC *do_call(char *name, EXP *arglist)
 	for (alt = arglist; alt != NULL; alt = alt->next)
 		code = join_tac(code, alt->tac);
 
-	TAC *arg_stack[32];
-	unsigned int stack_pointer = 0;
 	while (arglist != NULL) /* Generate ARG instructions */
 	{
 		temp = mk_tac(TAC_ACTUAL, arglist->ret, NULL, NULL);
-		arg_stack[stack_pointer++] = temp;
-		// temp->prev = code;
-		// code = temp;
+		temp->prev = code;
+		code = temp;
 
 		alt = arglist->next;
 		arglist = alt;
 	};
-	while (stack_pointer)
-	{
-		temp = arg_stack[--stack_pointer];
-		temp->prev = code;
-		code = temp;
-	}
 
-	SYM *temp_sym = mk_sym();
-	temp_sym->name = strdup(name);
-	temp = mk_tac(TAC_CALL, NULL, temp_sym, NULL);
+	temp = mk_tac(TAC_CALL, NULL, (SYM *)strdup(name), NULL);
 	temp->prev = code;
 	code = temp;
 
@@ -504,8 +493,6 @@ EXP *do_call_ret(char *name, EXP *arglist)
 	SYM *ret;	 /* Where function result will go */
 	TAC *code; /* Resulting code */
 	TAC *temp; /* Temporary for building code */
-	TAC *arg_stack[32];
-	unsigned int stack_pointer = 0;
 
 	ret = mk_tmp(); /* For the result */
 	code = mk_tac(TAC_VAR, ret, NULL, NULL);
@@ -516,23 +503,14 @@ EXP *do_call_ret(char *name, EXP *arglist)
 	while (arglist != NULL) /* Generate ARG instructions */
 	{
 		temp = mk_tac(TAC_ACTUAL, arglist->ret, NULL, NULL);
-		arg_stack[stack_pointer++] = temp;
-		// temp->next = code;
-		// code = temp;
+		temp->prev = code;
+		code = temp;
 
 		alt = arglist->next;
 		arglist = alt;
 	};
-	while (stack_pointer)
-	{
-		temp = arg_stack[--stack_pointer];
-		temp->prev = code;
-		code = temp;
-	}
 
-	SYM *temp_sym = mk_sym();
-	temp_sym->name = strdup(name);
-	temp = mk_tac(TAC_CALL, ret, temp_sym, NULL);
+	temp = mk_tac(TAC_CALL, ret, (SYM *)strdup(name), NULL);
 	temp->prev = code;
 	code = temp;
 
@@ -640,6 +618,10 @@ SYM *get_var(char *name)
 	return sym;
 }
 
+SYM *get_arr(char *name)
+{
+}
+
 EXP *mk_exp(EXP *next, SYM *ret, TAC *code)
 {
 	EXP *exp = (EXP *)malloc(sizeof(EXP));
@@ -663,7 +645,8 @@ SYM *mk_text(char *text)
 		return sym;
 	}
 
-	/* text unseen before, set up a new symbol table node, insert_sym it into the symbol table. */
+	/* text unseen before, set up a new symbol table node, insert_sym it into the
+	 * symbol table. */
 	sym = mk_sym();
 	sym->type = SYM_TEXT;
 	sym->name = text;					 /* ysj */
@@ -717,7 +700,7 @@ char *to_str(SYM *s, char *str)
 
 	case SYM_TEXT:
 		/* Put the address of the text */
-		sprintf(str, "L%d", s->label);
+		sprintf(str, "L%d", s->lable);
 		return str;
 
 	case SYM_INT:
@@ -750,43 +733,53 @@ void tac_print(TAC *i)
 		break;
 
 	case TAC_ADD:
-		printf("%s = %s + %s", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = %s + %s", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_SUB:
-		printf("%s = %s - %s", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = %s - %s", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_MUL:
-		printf("%s = %s * %s", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = %s * %s", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_DIV:
-		printf("%s = %s / %s", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = %s / %s", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_EQ:
-		printf("%s = (%s == %s)", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = (%s == %s)", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_NE:
-		printf("%s = (%s != %s)", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = (%s != %s)", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_LT:
-		printf("%s = (%s < %s)", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = (%s < %s)", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_LE:
-		printf("%s = (%s <= %s)", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = (%s <= %s)", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_GT:
-		printf("%s = (%s > %s)", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = (%s > %s)", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_GE:
-		printf("%s = (%s >= %s)", to_str(i->a, sa), to_str(i->b, sb), to_str(i->c, sc));
+		printf("%s = (%s >= %s)", to_str(i->a, sa), to_str(i->b, sb),
+					 to_str(i->c, sc));
 		break;
 
 	case TAC_NEG:
@@ -815,9 +808,9 @@ void tac_print(TAC *i)
 
 	case TAC_CALL:
 		if (i->a == NULL)
-			printf("call %s", i->b->name);
+			printf("call %s", (char *)i->b);
 		else
-			printf("%s = call %s", to_str(i->a, sa), i->b->name);
+			printf("%s = call %s", to_str(i->a, sa), (char *)i->b);
 		break;
 
 	case TAC_RETURN:

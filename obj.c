@@ -58,9 +58,14 @@ void insert_desc(int r, SYM *n, int mod)
 
 void spill_one(int r)
 {
-	if ((rdesc[r].var != NULL) && rdesc[r].modified && !rdesc[r].var->temp_flag)
+	// if ((rdesc[r].var != NULL) && rdesc[r].modified && !rdesc[r].var->temp_flag)
+	if ((rdesc[r].var != NULL) && rdesc[r].modified)
 	{
-		if (rdesc[r].var->store == 1) /* local var */
+		if (rdesc[r].var->temp_flag && rdesc[r].var->offset == -1)
+		{
+			return;
+		}
+		if (rdesc[r].var->store || rdesc[r].var->temp_flag) /* local var */
 		{
 			if (rdesc[r].var->offset == 0)
 				printf("	str x%u,[%s]\n", r, R_BP);
@@ -133,12 +138,38 @@ void load_reg(int r, SYM *n)
 		}
 
 	case SYM_VAR:
-		if (n->store == 1) /* local var */
+		if (n->offset == -1)
+			break;
+		if (n->store == 1 || n->temp_flag) /* local var */
 		{
 			if (n->offset == 0)
 				printf("	ldr x%u,[sp]\n", r);
 			else
 				printf("	ldr x%u,[sp, %d]\n", r, n->offset);
+			// if ((n->offset) >= 0)
+			// 	// printf("	LOD x%u,(x%u+%d)\n", r, R_BP, n->offset);
+			// 	printf("	ldr x%u,[sp, %d]\n", r, n->offset);
+			// else
+			// 	// printf("	LOD x%u,(x%u-%d)\n", r, R_BP, -(n->offset));
+			// 	printf("	ldr x%u,[sp, %d]\n", r, -(n->offset));
+		}
+		else /* global var */
+		{
+			// printf("	LOD x%u,STATIC\n", R_TP);
+			// printf("	LOD x%u,(x%u+%d)\n", r, R_TP, n->offset);
+			// printf("	adr x%u,static\n", R_TP);
+			// printf("	ldr x%u,[x%u, %d]\n", r, R_TP, n->offset);
+
+			// reading label of n
+			printf("	adrp x%u, %s\n", r, n->name);
+			printf("	add x%u, x%u, :lo12:%s\n", r, r, n->name);
+			printf("  ldr x%u, [x%u]\n", r, r);
+		}
+		break;
+	case SYM_ARR:
+		if (n->store == 1) /* local var */
+		{
+			printf("  add x%u, sp, %d\n", r, n->offset);
 			// if ((n->offset) >= 0)
 			// 	// printf("	LOD x%u,(x%u+%d)\n", r, R_BP, n->offset);
 			// 	printf("	ldr x%u,[sp, %d]\n", r, n->offset);
@@ -425,13 +456,17 @@ unsigned int asm_function_var_size(TAC *code)
 	unsigned int size = 0;
 	for (TAC *current_code = code; current_code->op != TAC_ENDFUNC; current_code = current_code->next)
 	{
-		if ((current_code->op == TAC_VAR || current_code->op == TAC_FORMAL) && current_code->a->temp_flag != 1)
+		if ((current_code->op == TAC_ARR || current_code->op == TAC_VAR || current_code->op == TAC_FORMAL) && current_code->a->temp_flag != 1)
 		{
 			switch (current_code->a->type)
 			{
 			case SYM_VAR:
 				// size += sizeof(long);
 				size += 8;
+				break;
+			case SYM_ARR:
+				// size += sizeof(long);
+				size += 8 * current_code->b->value;
 				break;
 			case SYM_UNDEF:
 				fprintf(stderr, "[ERROR] UNDEFINED SYMBOL IN FUNCTION\n");
@@ -577,7 +612,7 @@ void asm_str(SYM *s)
 	// printf("0\n"); /* End of string */
 }
 
-asm_rodata(SYM *rodata_sym_list)
+void asm_rodata(SYM *rodata_sym_list)
 {
 	printf("	.section .rodata\n// Read-only data section\n");
 	for (SYM *sl = rodata_sym_list; sl != NULL; sl = sl->next)
@@ -607,6 +642,14 @@ void asm_static(void)
 			printf("  .size %s, %u\n", sl->name, sizeof(int));
 			printf("%s:\n", sl->name);
 			printf("  .word %u\n", sl->value);
+			break;
+		case SYM_ARR:
+			printf("  .global %s\n", sl->name);
+			printf("  .type %s, %%object\n", sl->name);
+			printf("  .size %s, %u\n", sl->name, sizeof(int) * sl->size);
+			printf("%s:\n", sl->name);
+			printf("  .word %u\n", sl->value);
+			break;
 
 		default:
 			break;
@@ -625,6 +668,7 @@ void asm_code(TAC *code)
 	unsigned int size = 0;
 	unsigned int formal_arg = 0;
 	TAC *prev_cur;
+	int single_var_reg;
 
 	switch (code->op)
 	{
@@ -785,6 +829,38 @@ void asm_code(TAC *code)
 													// code->a->offset = tos;
 													// tos += REG_OFFSET_STEP;
 		}
+		return;
+
+	case TAC_ARR:
+		if (scope_local)
+		{
+			code->a->store = 1; /* local var */
+			code->a->offset = frame_offset;
+			load_reg(R_TP, code->a);
+			spill_one(R_TP);
+			frame_offset += REG_WIDTH * code->b->value;
+		}
+		else
+		// global var is marked with label.
+		{
+			code->a->store = 0; /* global var */
+													// code->a->offset = tos;
+													// tos += REG_OFFSET_STEP;
+		}
+		return;
+
+	case TAC_COPY_LARR:
+		// base address of arr
+		load_reg(R_TP, code->a);
+		single_var_reg = get_second_reg(code->c, R_TP);
+		printf("  str x%u, [x%u, #%d]", single_var_reg, R_TP, code->b->value * 8);
+		return;
+
+	case TAC_COPY_RARR:
+		load_reg(R_TP, code->b);
+		code->a->offset = code->b->offset + code->c->value * 8;
+		single_var_reg = get_second_reg(code->a, R_TP);
+		printf("  ldr x%u, [x%u, #%d]", single_var_reg, R_TP, code->c->value * 8);
 		return;
 
 	case TAC_RETURN:

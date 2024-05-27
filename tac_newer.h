@@ -1,8 +1,3 @@
-#ifndef TACH
-#define TACH
-
-#include <ctype.h>
-
 /* type of symbol */
 #define SYM_UNDEF 0
 #define SYM_VAR 1
@@ -46,21 +41,20 @@
 typedef struct sym
 {
 	/*
-		type:SYM_VAR name:abc value:98 offset:-1
-		type:SYM_VAR name:bcd value:99 offset:4
-		type:SYM_LABEL name:L1/max
-		type:SYM_INT value:1
-		type:SYM_FUNC name:max address:1234
-		type:SYM_TEXT name:"hello" label:10
+					type:SYM_VAR name:abc value:98 offset:-1
+					type:SYM_VAR name:bcd value:99 offset:4
+					type:SYM_LABEL name:L1/max
+					type:SYM_INT value:1
+					type:SYM_FUNC name:max address:1234
+					type:SYM_TEXT name:"hello" lable:10
 	*/
 	int type;
 	int store; /* 0:global, 1:local */
 	char *name;
 	int offset;
 	int value;
-	int label;
-	int size; // arr size
-	int temp_flag;
+	int lable;
+	int size;
 	struct tac *address; /* SYM_FUNC */
 	struct sym *next;
 } SYM;
@@ -73,14 +67,6 @@ typedef struct tac /* TAC instruction node */
 	SYM *a;
 	SYM *b;
 	SYM *c;
-
-	/* ---------------- For Optimizer Phase ---------------- */
-	int id;
-	// For Data-Flow-Analysis, we need to know the OUT of each TAC sometimes.
-	__int8_t *OUT_vector;
-	// __int8_t * IN_vector;
-	// This is used ONLY for Constant Propagation Data-flow-analysis!
-	int *Val_Status;
 } TAC;
 
 typedef struct exp /* Parser expression */
@@ -105,6 +91,7 @@ SYM *mk_char(char n);
 SYM *mk_text(char *text);
 SYM *mk_tmp(void);
 
+// SYM *mk_arr(char name, int size,int type);
 TAC *mk_tac(int op, SYM *a, SYM *b, SYM *c);
 EXP *mk_exp(EXP *next, SYM *ret, TAC *code);
 TAC *join_tac(TAC *c1, TAC *c2);
@@ -130,5 +117,3 @@ TAC *declare_arr(char *name, int size);
 SYM *mk_arr(char *name, int size);
 SYM *get_arr(char *name);
 TAC *do_assign_arr(SYM *var, SYM *index, EXP *exp);
-
-#endif

@@ -55,27 +55,34 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     INT = 258,                     /* INT  */
-    EQ = 259,                      /* EQ  */
-    NE = 260,                      /* NE  */
-    LT = 261,                      /* LT  */
-    LE = 262,                      /* LE  */
-    GT = 263,                      /* GT  */
-    GE = 264,                      /* GE  */
-    UMINUS = 265,                  /* UMINUS  */
-    IF = 266,                      /* IF  */
-    THEN = 267,                    /* THEN  */
-    ELSE = 268,                    /* ELSE  */
-    FI = 269,                      /* FI  */
-    WHILE = 270,                   /* WHILE  */
-    DO = 271,                      /* DO  */
-    DONE = 272,                    /* DONE  */
-    CONTINUE = 273,                /* CONTINUE  */
-    FUNC = 274,                    /* FUNC  */
-    PRINT = 275,                   /* PRINT  */
-    RETURN = 276,                  /* RETURN  */
-    INTEGER = 277,                 /* INTEGER  */
-    IDENTIFIER = 278,              /* IDENTIFIER  */
-    TEXT = 279                     /* TEXT  */
+    CHAR = 259,                    /* CHAR  */
+    SHORT = 260,                   /* SHORT  */
+    LONG = 261,                    /* LONG  */
+    FLOAT = 262,                   /* FLOAT  */
+    EQ = 263,                      /* EQ  */
+    NE = 264,                      /* NE  */
+    LT = 265,                      /* LT  */
+    LE = 266,                      /* LE  */
+    GT = 267,                      /* GT  */
+    GE = 268,                      /* GE  */
+    UMINUS = 269,                  /* UMINUS  */
+    IF = 270,                      /* IF  */
+    THEN = 271,                    /* THEN  */
+    ELSE = 272,                    /* ELSE  */
+    FI = 273,                      /* FI  */
+    WHILE = 274,                   /* WHILE  */
+    DO = 275,                      /* DO  */
+    DONE = 276,                    /* DONE  */
+    CONTINUE = 277,                /* CONTINUE  */
+    FUNC = 278,                    /* FUNC  */
+    PRINT = 279,                   /* PRINT  */
+    RETURN = 280,                  /* RETURN  */
+    FOR = 281,                     /* FOR  */
+    STRUCT = 282,                  /* STRUCT  */
+    CHARACTER = 283,               /* CHARACTER  */
+    INTEGER = 284,                 /* INTEGER  */
+    IDENTIFIER = 285,              /* IDENTIFIER  */
+    TEXT = 286                     /* TEXT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -85,33 +92,40 @@ extern int yydebug;
 #define YYerror 256
 #define YYUNDEF 257
 #define INT 258
-#define EQ 259
-#define NE 260
-#define LT 261
-#define LE 262
-#define GT 263
-#define GE 264
-#define UMINUS 265
-#define IF 266
-#define THEN 267
-#define ELSE 268
-#define FI 269
-#define WHILE 270
-#define DO 271
-#define DONE 272
-#define CONTINUE 273
-#define FUNC 274
-#define PRINT 275
-#define RETURN 276
-#define INTEGER 277
-#define IDENTIFIER 278
-#define TEXT 279
+#define CHAR 259
+#define SHORT 260
+#define LONG 261
+#define FLOAT 262
+#define EQ 263
+#define NE 264
+#define LT 265
+#define LE 266
+#define GT 267
+#define GE 268
+#define UMINUS 269
+#define IF 270
+#define THEN 271
+#define ELSE 272
+#define FI 273
+#define WHILE 274
+#define DO 275
+#define DONE 276
+#define CONTINUE 277
+#define FUNC 278
+#define PRINT 279
+#define RETURN 280
+#define FOR 281
+#define STRUCT 282
+#define CHARACTER 283
+#define INTEGER 284
+#define IDENTIFIER 285
+#define TEXT 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "mini.y"
+#line 17 "mini.y"
 
 	char character;
 	char *string;
@@ -119,7 +133,7 @@ union YYSTYPE
 	TAC *tac;
 	EXP	*exp;
 
-#line 123 "mini.y.h"
+#line 137 "mini.y.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

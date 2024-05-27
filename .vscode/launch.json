@@ -29,12 +29,36 @@
       ]
     },
     {
-      "name": "(gdb) 启动",
+      "name": "debug arr assembly",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/sample/arr.m.s.o",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "为 gdb 启用整齐打印",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "将反汇编风格设置为 Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
+      "name": "debug arr obj",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/mini",
       "args": [
-        "sample/func.m"
+        "./sample/arr.m"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
