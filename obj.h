@@ -4,10 +4,10 @@
 #define R_UNDEF -1
 // #define R_FLAG 0	// FLAG bit
 #define R_IP "pc" // reg PC
-#define R_BP "sp" // Base Address
+#define R_BP 10		// Base Address
 #define R_JP 30		// Jump Address
 #define R_FP 29
-#define R_TP 7	// Temp
+#define R_TP 0	// Temp
 #define R_GEN 0 // General starting from 0, ending at 30
 #define R_NUM 31
 #define REG_WIDTH 8				 // 64ARM: 8byte

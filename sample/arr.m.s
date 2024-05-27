@@ -40,7 +40,6 @@ func:
 	add x0,x0,x1
 
 	# return t0
-	mov x7,x0
 
 	# end
   ldp x29, x30, [sp]
@@ -58,7 +57,7 @@ main:
   add sp, sp, #-96
 	stp x29, x30, [sp]
 	# var arr[5]
-  add x7, sp, 16
+  add x0, sp, 16
 
 	# var a
 
@@ -71,20 +70,21 @@ main:
 	# var z
 
 	# arr[0]=0
+	mov x10,x0
 	ldr x0,=0
-  str x0, [x7, #0]
+  str x0, [x10, #0]
 	# arr[1]=1
 	ldr x1,=1
-  str x1, [x7, #8]
+  str x1, [x10, #8]
 	# arr[2]=2
 	ldr x2,=2
-  str x2, [x7, #16]
+  str x2, [x10, #16]
 	# arr[3]=3
 	ldr x3,=3
-  str x3, [x7, #24]
+  str x3, [x10, #24]
 	# arr[4]=4
 	ldr x4,=4
-  str x4, [x7, #32]
+  str x4, [x10, #32]
 	# a = 20
 	ldr x5,=20
 
@@ -100,43 +100,43 @@ main:
 	# z = 'z'
 
 	# c = 2
-	ldr x9,=2
+	ldr x8,=2
 
 	# var t2
 
 	# t2=arr[0]
-	ldr x10,[sp, 16]
-  ldr x10, [x7, #0]
+	ldr x9,[sp, 16]
+  ldr x9, [x10, #0]
 	# var t3
 
 	# t3=arr[1]
 	ldr x11,[sp, 24]
-  ldr x11, [x7, #8]
+  ldr x11, [x10, #8]
 	# var t4
 
 	# t4 = t2 + t3
-	add x10,x10,x11
+	add x9,x9,x11
 
 	# var t5
 
 	# t5=arr[2]
 	ldr x12,[sp, 32]
-  ldr x12, [x7, #16]
+  ldr x12, [x10, #16]
 	# var t6
 
 	# t6 = t4 + t5
-	add x10,x10,x12
+	add x9,x9,x12
 
 	# var t7
 
 	# t7 = t6 + c
-	add x10,x10,x9
+	add x9,x9,x8
 
 	# arr[3]=t7
-  str x10, [x7, #24]
+  str x9, [x10, #24]
 	# arr[4]=6
 	ldr x13,=6
-  str x13, [x7, #32]
+  str x13, [x10, #32]
 	# var t8
 
 	# t8 = b + 5
@@ -145,19 +145,19 @@ main:
 	add x5,x5,x14
 
 	# arr[1]=t8
-  str x5, [x7, #8]
+  str x5, [x10, #8]
 	# var t11
 
 	# var t10
 
 	# t10=arr[2]
 	ldr x15,[sp, 32]
-  ldr x15, [x7, #16]
+  ldr x15, [x10, #16]
 	# var t9
 
 	# t9=arr[1]
 	ldr x16,[sp, 24]
-  ldr x16, [x7, #8]
+  ldr x16, [x10, #8]
 	# actual t9
 	mov x0,x16
 
@@ -165,12 +165,12 @@ main:
 	mov x1,x15
 
 	# t11 = call func
-	str x8,[sp, 88]
-	str x9,[sp, 72]
+	str x7,[sp, 88]
+	str x8,[sp, 72]
   bl func
 	# arr[2]=t11
-  add x7, sp, 16
-  str x0, [x7, #16]
+  add x10, sp, 16
+  str x0, [x10, #16]
 	# var t12
 
 	# t12 = b + c
@@ -276,9 +276,9 @@ L1:
 	# var t19
 
 	# t19=arr[0]
-  add x7, sp, 16
+  add x10, sp, 16
 	ldr x0,[sp, 16]
-  ldr x0, [x7, #0]
+  ldr x0, [x10, #0]
 	# actual L6
 	adrp x0, str6
 	add x0, x0, :lo12:str6
@@ -291,9 +291,9 @@ L1:
 	# var t20
 
 	# t20=arr[1]
-  add x7, sp, 16
+  add x10, sp, 16
 	ldr x0,[sp, 24]
-  ldr x0, [x7, #8]
+  ldr x0, [x10, #8]
 	# actual L7
 	adrp x0, str7
 	add x0, x0, :lo12:str7
@@ -306,9 +306,9 @@ L1:
 	# var t21
 
 	# t21=arr[2]
-  add x7, sp, 16
+  add x10, sp, 16
 	ldr x0,[sp, 32]
-  ldr x0, [x7, #16]
+  ldr x0, [x10, #16]
 	# actual L8
 	adrp x0, str8
 	add x0, x0, :lo12:str8
@@ -321,9 +321,9 @@ L1:
 	# var t22
 
 	# t22=arr[3]
-  add x7, sp, 16
+  add x10, sp, 16
 	ldr x0,[sp, 40]
-  ldr x0, [x7, #24]
+  ldr x0, [x10, #24]
 	# actual L9
 	adrp x0, str9
 	add x0, x0, :lo12:str9
@@ -334,7 +334,7 @@ L1:
 	# call printf
   bl printf
 	# return 0
-	ldr x7,=0
+	ldr x0,=0
 
 	# end
   ldp x29, x30, [sp]

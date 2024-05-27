@@ -68,9 +68,9 @@ void spill_one(int r)
 		if (rdesc[r].var->store || rdesc[r].var->temp_flag) /* local var */
 		{
 			if (rdesc[r].var->offset == 0)
-				printf("	str x%u,[%s]\n", r, R_BP);
+				printf("	str x%u,[%s]\n", r, "sp");
 			else
-				printf("	str x%u,[%s, %u]\n", r, R_BP, rdesc[r].var->offset);
+				printf("	str x%u,[%s, %u]\n", r, "sp", rdesc[r].var->offset);
 		}
 		else /* global var */
 		{
@@ -851,16 +851,16 @@ void asm_code(TAC *code)
 
 	case TAC_COPY_LARR:
 		// base address of arr
-		load_reg(R_TP, code->a);
-		single_var_reg = get_second_reg(code->c, R_TP);
-		printf("  str x%u, [x%u, #%d]", single_var_reg, R_TP, code->b->value * 8);
+		load_reg(R_BP, code->a);
+		single_var_reg = get_second_reg(code->c, R_BP);
+		printf("  str x%u, [x%u, #%d]", single_var_reg, R_BP, code->b->value * 8);
 		return;
 
 	case TAC_COPY_RARR:
-		load_reg(R_TP, code->b);
+		load_reg(R_BP, code->b);
 		code->a->offset = code->b->offset + code->c->value * 8;
-		single_var_reg = get_second_reg(code->a, R_TP);
-		printf("  ldr x%u, [x%u, #%d]", single_var_reg, R_TP, code->c->value * 8);
+		single_var_reg = get_second_reg(code->a, R_BP);
+		printf("  ldr x%u, [x%u, #%d]", single_var_reg, R_BP, code->c->value * 8);
 		return;
 
 	case TAC_RETURN:
