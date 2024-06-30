@@ -1,4 +1,4 @@
-label main
+      label main
 begin
 var i
 var j

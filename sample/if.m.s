@@ -1,7 +1,8 @@
   .arch armv8-a
   .text
 
-	.data  .global k
+	.data
+  .global k
   .type k, %object
   .size k, 4
 k:
@@ -49,26 +50,22 @@ main:
 cmp_a0:	mov x0,0
 cmp_b0:
 	# ifz t0 goto L3
-	str x1,[sp, 8]
-	ldr x11, k
-	str x2,[x11]
+	str x1,[sp, 24]
+	ldr x0, k
 	cbz x0, L3
 
 	# actual L1
-	adr x0,str1
+	adrp x0, str1
+	add x0, x0, :lo12:str1
 
-	# call (null)
-  bl (null)
 	# actual i
-	ldr x0,[sp, 16]
+	ldr x1,[sp, 16]
 
-	# call (null)
-  bl (null)
 	# actual j
-	ldr x0,[sp, 8]
+	ldr x2,[sp, 24]
 
-	# call (null)
-  bl (null)
+	# call print
+  bl print
 	# goto L4
 	b L4
 
@@ -78,20 +75,17 @@ cmp_b0:
 L3:
 
 	# actual L2
-	adr x0,str2
+	adrp x0, str2
+	add x0, x0, :lo12:str2
 
-	# call (null)
-  bl (null)
 	# actual i
-	ldr x0,[sp, 16]
+	ldr x1,[sp, 16]
 
-	# call (null)
-  bl (null)
 	# actual j
-	ldr x0,[sp, 8]
+	ldr x2,[sp, 24]
 
-	# call (null)
-  bl (null)
+	# call print
+  bl print
 	# label L4
 	.text
 	.global L4
@@ -102,15 +96,16 @@ L4:
 
 	# actual L5
 	str x0,[sp, 16]
-	adr x0,str5
+	adrp x0, str5
+	add x0, x0, :lo12:str5
 
-	# call (null)
-  bl (null)
 	# actual i
-	ldr x0,[sp, 16]
+	ldr x1,[sp, 16]
 
-	# call (null)
-  bl (null)
+	# call print
+  bl print
 	# end
   ldp x29, x30, [sp]
   add sp, sp, #32
+  ret
+.size main, .-main

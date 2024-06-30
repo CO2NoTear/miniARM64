@@ -138,10 +138,10 @@ void load_reg(int r, SYM *n)
 		}
 
 	case SYM_VAR:
-		if (n->offset == -1)
-			break;
 		if (n->store == 1 || n->temp_flag) /* local var */
 		{
+			if (n->offset == -1)
+				break;
 			if (n->offset == 0)
 				printf("	ldr x%u,[sp]\n", r);
 			else

@@ -583,7 +583,7 @@ TAC *do_test(EXP *exp, TAC *stmt1, TAC *stmt2)
 	return label2;
 }
 
-TAC *do_while(EXP *exp, TAC *stmt)
+TAC *  do_while(EXP *exp, TAC *stmt)
 {
 	TAC *label = mk_tac(TAC_LABEL, mk_label(mk_lstr(next_label++)), NULL, NULL);
 	TAC *code = mk_tac(TAC_GOTO, label->a, NULL, NULL);
